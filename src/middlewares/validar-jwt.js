@@ -9,7 +9,7 @@ const validarJWT = async (req, res, next) => {
     // Se verifica si es que existe el token en la petición
     if (!token) {
         return res.status(401).json({
-            msg: 'Error de autenticación - Token no válido'
+            msg: 'Error de autenticación - No hay token en la petición'
         })
     };
 

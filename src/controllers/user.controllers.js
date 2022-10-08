@@ -14,8 +14,8 @@ ctrlUser.getUsers = async (req, res) => {
 // Controlador para crear nuevo usuario en la Base de Datos.
 ctrlUser.postUser = async (req, res) => {
     // Se obtienen los datos enviados por método POST
-    const { username, password:passwordRecibida, email } = req.body;
-    
+    const { username, password: passwordRecibida, email } = req.body;
+
     // Encriptar la contraseña del usuario
     const newPassword = bcrypt.hashSync(passwordRecibida, 10);
 
@@ -28,7 +28,7 @@ ctrlUser.postUser = async (req, res) => {
 
     // Se almacena en la base de datos con método asícrono .save()
     const user = await newUser.save();
-    
+
     // Se devuelve una respuesta al cliente con un mensaje y los datos del usuario creado.
     return res.json({
         msg: 'Usuario creado correctamente',
@@ -38,9 +38,25 @@ ctrlUser.postUser = async (req, res) => {
 
 // Controlador para actualizar un usuario, requiere que se envíe ID  de usuario.
 ctrlUser.putUser = async (req, res) => {
-    return res.json({
-        msg: ''
-    })
+
+    const userId = req.params.id;
+
+    const { username, email, isActive, role, ...otraData } = req.body;
+
+    const data = { username, email, isActive, role };
+
+    try {
+        const dataUpdated = await User.findByIdAndUpdate(userId, data, { new: true});
+
+        return res.json({
+            msg: 'Usuario actualizado correctamente',
+            dataUpdated
+        })
+    } catch (error) {
+        return res.status(500).json({
+            msg:'Error al actualizar usuario'
+        })
+    }
 };
 
 // Controlador para eliminar usuario, requiere ID de usuario.
