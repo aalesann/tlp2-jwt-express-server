@@ -1,6 +1,7 @@
 // El método Router() de Express nos permite crear rutas
 const router = require('express').Router();
 
+const { check } = require('express-validator');
 // Importando controladores
 const {
     getUsers,
@@ -9,8 +10,12 @@ const {
     deleteUser,
 
 } = require('../controllers/user.controllers');
+
 const esAdmin = require('../middlewares/es-admin');
+
+const validarCampos = require('../middlewares/validar-campos');
 const validarJWT = require('../middlewares/validar-jwt');
+const validarEmail = require('../helpers/validarEmail');
 
 // Definiendo rutas
 
@@ -22,7 +27,12 @@ router.get('/user',[
 
 // Crear nuevo usuario
 router.post('/user', [
-    validarJWT
+    // validarJWT
+    check('email')
+    .isEmail().withMessage('Revise los campos y vuelva a intentarlo - no es email')
+    .custom(validarEmail),
+
+    validarCampos
 ], postUser);
 
 // Editar usuario, requiere ID de usuario

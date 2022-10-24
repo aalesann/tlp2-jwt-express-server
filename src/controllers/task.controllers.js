@@ -3,12 +3,13 @@ ctrlTask = {};
 
 
 ctrlTask.createTask = async (req, res) => {
+
     const { title, description } = req.body;
 
     const task = new Tasks({
         title,
         description,
-        userId: req.user._id
+        //userId: req.user._id
     });
 
 

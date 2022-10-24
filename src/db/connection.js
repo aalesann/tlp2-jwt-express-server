@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const dbConnect = () => {
     try {
-        mongoose.connect(process.env.URI_MONGODB, {
+        mongoose.connect(process.env.URI_MONGODB || 'mongodb://localhost:27017/ipfdb', {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
