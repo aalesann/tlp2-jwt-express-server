@@ -8,6 +8,12 @@ const ctrlAuth = {};
 ctrlAuth.iniciarSesion = async (req, res) => {
 
     const { username, password } = req.body;
+    if(!username || !password){
+        return res.status(400).json({
+            ok: false,
+            msg: 'Todos los campos son obligatorios'
+        });
+    }
 
     try {
         // Buscar si el usuario pertenece a nuestro sistema
@@ -29,7 +35,7 @@ ctrlAuth.iniciarSesion = async (req, res) => {
 
         // Verificar la contraseña
         const validPassword = bcrypt.compareSync(password, user.password);
-
+        
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,
@@ -38,9 +44,17 @@ ctrlAuth.iniciarSesion = async (req, res) => {
         }
 
         // Generar el token
-        const token = await generarJWT({ uid: user._id })
+        const token = await generarJWT(user._id)
+        if(!token){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Error al autenticarse'
+            });
+        }
 
-        return res.json({ token });
+        const userWithToken = user.toObject();
+        userWithToken.token = token;
+        return res.json(userWithToken);
     } catch (error) {
         return res.json({ msg: 'Error al iniciar sesión' });
     }
