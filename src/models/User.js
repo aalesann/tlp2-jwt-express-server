@@ -22,7 +22,6 @@ const UserSchema = new Schema({
     role:{
         type: Array,
     }
-
 }, {
     versionKey: false,
     timestamps: true
@@ -36,4 +35,4 @@ UserSchema.methods.toJSON = function() {
 }
 
 
-module.exports = model('Users', UserSchema);
+module.exports = model('User', UserSchema);

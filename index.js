@@ -8,6 +8,7 @@ const path = require('path');
 const express = require('express'); // Importando librería express
 const cors = require('cors');
 const morgan = require('morgan');
+const fileUpload = require('express-fileupload');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
@@ -25,30 +26,32 @@ const server = http.createServer(app);
 // Configurando socket.io para que escuche en el servidor http
 const io = new Server(server);
 
-
 // Configuraciones
 const port = process.env.PORT || 4000;
-
 
 // MIDDLEWARES
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json()); // Para que el servidor comprenda archivos con formato json
-
-
-// Directorio de archivos estáticos
+app.use(express.urlencoded({extended: true})); // Para que el servidor comprenda archivos con formato urlencoded
+app.use(fileUpload()); // Directorio de archivos estáticos
 app.use(express.static(path.join(__dirname, 'src/public')));
 
 // Importando rutas
 app.use(require('./src/routes/user.routes')); // Importando rutas
 app.use(require('./src/routes/auth.routes')); // Importando rutas
 app.use(require('./src/routes/task.routes')); // Importando rutas
+app.use(require('./src/routes/file.routes')); // Importando rutas
 
 // A partir de aquí, debería pasarse toda la configuración y escucha de eventos, hacía otro archivo
 let listMessages = [];
 
 // Socket.io events
 io.on('connection', (socket) => {
+
+    socket.on('current-messages', () => {
+        socket.emit('current-messages', listMessages);
+    });
 
     // Escuchando evento de envío de mensaje
     socket.on('new-message', (data) => {

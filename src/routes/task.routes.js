@@ -23,8 +23,9 @@ router.post('/task', [
     validarCampos
 ], createTask);
 
-router.get('/task', [
-    validarJWT
+router.get('/tasks', [
+    validarJWT,
+    validarCampos
 ], getTasks);
 
 module.exports = router;
