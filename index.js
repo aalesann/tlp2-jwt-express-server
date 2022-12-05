@@ -34,8 +34,12 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json()); // Para que el servidor comprenda archivos con formato json
 app.use(express.urlencoded({extended: true})); // Para que el servidor comprenda archivos con formato urlencoded
-app.use(fileUpload()); // Directorio de archivos estáticos
-app.use(express.static(path.join(__dirname, 'src/public')));
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(__dirname, 'src/public/uploads/temp'),
+    createParentPath: true
+})); 
+app.use(express.static(path.join(__dirname, 'src/public'))); // Directorio de archivos estáticos
 
 // Importando rutas
 app.use(require('./src/routes/user.routes')); // Importando rutas
